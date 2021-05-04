@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+}
+
+group 'JbehaveGradle'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile group: 'io.github.bonigarcia', name: 'webdrivermanager', version: '+'
+    compile group: 'org.jbehave', name: 'jbehave-core', version: '4.8.3'
+    compile group: 'com.codeborne', name: 'selenide', version: '5.13.0'
+}
+
+
+
+test {
+    systemProperty "story", System.properties['story']
+    doFirst {
+        copy {
+            from(zipTree(jarPath("jbehave-core"))) {
+                include "style/**/*"
+            }
+            into("build/jbehave/view")
+        }
+    }
+}
+
+def jarPath(String jarName) {
+    configurations.testCompile.find({ it.name.startsWith(jarName) }).absolutePath
+}
